@@ -1,0 +1,40 @@
+# Use an official Node.js runtime as a parent image
+FROM node:18.19.0
+
+# Install wget and gnupg (required for adding the Google Chrome repository)
+RUN apt-get update
+
+# Set the working directory to /app/client
+WORKDIR /app/client
+
+# Add `/home/node/app/node_modules/.bin` to $PATH
+ENV PATH /app/client/node_modules/.bin:$PATH
+
+# Add package.json to the container at /app/client/package.json
+COPY package*.json .
+
+# Install dependencies
+RUN npm install
+
+# Update globally
+RUN npm install -g @angular/cli@latest
+
+# Update locally in your project
+RUN npm install @angular/cli@latest --save-dev
+RUN npm install tslib --save-dev
+
+RUN npm update
+
+# Copy the current directory contents into the container at /app/client
+COPY .gitignore .
+COPY angular.json .
+COPY tsconfig.app.json .
+COPY tsconfig.json .
+COPY tsconfig.spec.json .
+COPY ./src .
+
+# Make port 4200 available to the world outside this container
+EXPOSE 4200
+
+# Define the command to run your app
+CMD ["ng", "serve", "--host", "0.0.0.0"]

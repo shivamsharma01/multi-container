@@ -1,0 +1,46 @@
+version: '3.7'
+
+services:
+
+  client:
+    container_name: client
+    build: 
+      context: ./ui
+      dockerfile: Dockerfile.dev
+    volumes:
+      - './ui:/app/client'
+      #- './ui/node_modules:/app/client/node_modules'
+    ports:
+      - '4200:4200'
+  
+  server:
+    container_name: server
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - './backend:/app/backend'
+    ports:
+      - '8080:8080'
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db'
+      # So you don't have to use root, but you can if you like
+      MYSQL_USER: 'user'
+      # You can use whatever password you like
+      MYSQL_PASSWORD: 'password'
+      # Password for root access
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - my-db:/var/lib/mysql
+
+# Names our volume
+volumes:
+  my-db:

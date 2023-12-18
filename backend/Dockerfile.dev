@@ -1,0 +1,25 @@
+# Stage 1: Build the application
+FROM maven:3.9.6-sapmachine-17 as builder
+
+# Set the working directory to /app/backend
+WORKDIR /app/backend
+
+COPY pom.xml .
+
+COPY src ./src
+
+RUN mvn package -DskipTests
+
+#CMD ["java", "-jar", "backend.jar"]
+CMD ["mvn", "spring-boot:run"]
+# # Stage 2: Create the final image
+# FROM maven:3.9.6-sapmachine-17
+
+# # Set the working directory to /app/backend
+# WORKDIR /app/backend
+
+# # Copy the JAR file from the builder stage
+# COPY --from=builder /app/backend/target/backend.jar /app/backend/
+
+#Specify the command to run your application
+# CMD ["java", "-jar", "/app/backend/backend.jar"]
